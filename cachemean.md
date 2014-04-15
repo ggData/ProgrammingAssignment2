@@ -2,7 +2,7 @@
 
 The first code chunk defines the two example functions provided for the assignment. This is based on the example provided by Roger Peng [here](https://class.coursera.org/rprog-002/human_grading/view/courses/972078/assessments/3/submissions)
 
-- `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrik Gillen](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-826).
+- `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrick Gillen](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-826).
 - `cachemean()` takes a modified vector created as above and returnes the cached mean if it is already stored. The mean will thus need to be only calculated once.
 
 
@@ -80,7 +80,7 @@ system.time(test_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##  16.215   0.056  17.525
+##  16.167   0.054  16.567
 ```
 
 ```r
@@ -93,7 +93,7 @@ system.time(test_cache_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##   2.648   0.007   2.661
+##   2.621   0.008   2.659
 ```
 
 ```r
