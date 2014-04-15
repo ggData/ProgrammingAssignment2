@@ -2,7 +2,7 @@
 
 The first code chunk defines the two example functions provided for the assignment. This is based on the example provided by Roger Peng [here](https://class.coursera.org/rprog-002/human_grading/view/courses/972078/assessments/3/submissions)
 
-- `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated.
+- `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrik Gillen](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-826).
 - `cachemean()` takes a modified vector created as above and returnes the cached mean if it is already stored. The mean will thus need to be only calculated once.
 
 
@@ -16,7 +16,9 @@ makeVector <- function(x = numeric()) {
     get <- function() x
     setmean <- function(mean) m <<- mean
     getmean <- function() m
-    list(set = set, get = get, setmean = setmean, getmean = getmean)
+    retval <- list(set = set, get = get, setmean = setmean, getmean = getmean)
+    retval$set(x)
+    retval
 }
 
 cachemean <- function(x, ...) {
@@ -78,7 +80,7 @@ system.time(test_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##  16.196   0.058  16.388
+##  16.215   0.056  17.525
 ```
 
 ```r
@@ -91,12 +93,12 @@ system.time(test_cache_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##   2.601   0.007   2.613
+##   2.648   0.007   2.661
 ```
 
 ```r
 
-identical(mean(test_vec), mean(test_vec))
+identical(mean(test_vec), cachemean(makeVector(test_vec)))
 ```
 
 ```
@@ -106,7 +108,7 @@ identical(mean(test_vec), mean(test_vec))
 
 ## Results
 
-The results of one run of these tests with one million iterations:
+Here are the results of one such run of these tests with one million iterations (they will differ to some degree from the results produuced by the actual run above):
 
 ```
 > system.time(test_mean(test_vec, r))
@@ -119,7 +121,7 @@ The results of one run of these tests with one million iterations:
    user  system elapsed 
   2.624   0.011   2.645 
 
-> identical(mean(test_vec), mean(test_vec))
+> identical(mean(test_vec), cachemean(makeVector(test_vec)))
 [1] TRUE
 ```
 
