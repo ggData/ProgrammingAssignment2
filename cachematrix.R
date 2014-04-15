@@ -16,4 +16,4 @@ cacheSolve <- function(x, ...) {
 
 
 # NOTE this modification:
-# https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-826
+# https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-953

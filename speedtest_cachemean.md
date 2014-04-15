@@ -2,13 +2,14 @@
 
 The first code chunk defines the two example functions provided for the assignment. This is based on the example provided by Roger Peng [here](https://class.coursera.org/rprog-002/human_grading/view/courses/972078/assessments/3/submissions)
 
-- `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrick Gillen](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-826).
+- `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrick Gillen and modified by Lenka Vyslouzilova](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-953).
 - `cachemean()` takes a modified vector created as above and returnes the cached mean if it is already stored. The mean will thus need to be only calculated once.
 
 
 ```r
 makeVector <- function(x = numeric()) {
     m <- NULL
+    x <- x
     set <- function(y) {
         x <<- y
         m <<- NULL
@@ -16,9 +17,7 @@ makeVector <- function(x = numeric()) {
     get <- function() x
     setmean <- function(mean) m <<- mean
     getmean <- function() m
-    retval <- list(set = set, get = get, setmean = setmean, getmean = getmean)
-    retval$set(x)
-    retval
+    list(set = set, get = get, setmean = setmean, getmean = getmean)
 }
 
 cachemean <- function(x, ...) {
@@ -80,7 +79,7 @@ system.time(test_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##  16.144   0.046  16.256
+##  16.146   0.051  16.270
 ```
 
 ```r
@@ -93,7 +92,7 @@ system.time(test_cache_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##   2.596   0.006   2.612
+##   2.609   0.009   2.653
 ```
 
 ```r
@@ -108,7 +107,7 @@ identical(mean(test_vec), cachemean(makeVector(test_vec)))
 
 ## Results
 
-Here are the results of one such run of these tests with one million iterations (they will differ to some degree from the results produuced by the actual run above):
+Here are the results of one such run of these tests with one million iterations (they will differ to some degree from the results produced by the actual run above):
 
 ```
 > system.time(test_mean(test_vec, r))
