@@ -1,4 +1,24 @@
-### Introduction
+# Caching the Inverse of a Matrix
+
+**Gauden Galea**
+https://github.com/ggData/ProgrammingAssignment2  
+_15 April 2014_
+
+This repository includes a set of scripts and tests produced as part of the Coursera module on [R Programming by Roger Peng](https://www.coursera.org/course/rprog).
+
+### Files
+
+1. The set problem is reproduced below (Assignment Specifications)
+2. `cachematrix.R': The solution to the problem
+3. `speedtest_cachematrix.(Rmd|html|md): three files containing commentary on the solution, tests for correctness, and for speed of the solution, as well as documentation of the limitations of the solution.
+4. `speedtest_cachemean.(Rmd|html|md): three files that have the same commentary and tests in relation to the example provided by Roger Peng
+
+The material in files listed in bullet points 3. and 4. are not required for the assignment and are added for further explanation.
+
+----
+
+
+### Assignment Specifications
 
 This second programming assignment will require you to write an R
 function is able to cache potentially time-consuming computations. For
@@ -26,8 +46,6 @@ really a list containing a function to
 2.  get the value of the vector
 3.  set the value of the mean
 4.  get the value of the mean
-
-<!-- -->
 
     makeVector <- function(x = numeric()) {
             m <- NULL

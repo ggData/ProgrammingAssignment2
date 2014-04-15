@@ -1,9 +1,13 @@
 # Caching the Mean: A Speed Test
 
+**Gauden Galea**  
+https://github.com/ggData/ProgrammingAssignment2  
+_15 April 2014_
+
 The first code chunk defines the two example functions provided for the assignment. This is based on the example provided by Roger Peng [here](https://class.coursera.org/rprog-002/human_grading/view/courses/972078/assessments/3/submissions)
 
 - `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrick Gillen and modified by Lenka Vyslouzilova](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-953).
-- `cachemean()` takes a modified vector created as above and returnes the cached mean if it is already stored. The mean will thus need to be only calculated once.
+- `cachemean()` takes a modified vector created as above and returns the cached mean if it is already stored. The mean will thus need to be only calculated once.
 
 
 ```r
@@ -79,7 +83,7 @@ system.time(test_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##  16.146   0.051  16.270
+##   16.18    0.05   16.28
 ```
 
 ```r
@@ -92,7 +96,7 @@ system.time(test_cache_mean(test_vec, r))
 
 ```
 ##    user  system elapsed 
-##   2.609   0.009   2.653
+##   2.633   0.009   2.678
 ```
 
 ```r

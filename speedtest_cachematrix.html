@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=9" >
 
-<title>Caching the Mean: A Speed Test</title>
+<title>Caching the Inverse of a Matrix</title>
 
 <style type="text/css">
 body, td {
@@ -179,131 +179,124 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Caching the Mean: A Speed Test</h1>
+<h1>Caching the Inverse of a Matrix</h1>
 
 <p><strong>Gauden Galea</strong><br/>
 <a href="https://github.com/ggData/ProgrammingAssignment2">https://github.com/ggData/ProgrammingAssignment2</a><br/>
 <em>15 April 2014</em></p>
 
-<p>The first code chunk defines the two example functions provided for the assignment. This is based on the example provided by Roger Peng <a href="https://class.coursera.org/rprog-002/human_grading/view/courses/972078/assessments/3/submissions">here</a></p>
+<h2>Setting up</h2>
+
+<p>First we <code>source</code> the script called <code>cachematrix.R</code>. This brings two functions into the current environment:</p>
 
 <ul>
-<li><code>makeVector()</code> receives a <code>numeric</code> vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the <a href="https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-953">proposed changes by Patrick Gillen and modified by Lenka Vyslouzilova</a>.</li>
-<li><code>cachemean()</code> takes a modified vector created as above and returns the cached mean if it is already stored. The mean will thus need to be only calculated once.</li>
+<li><code>makeCacheMatrix()</code> receives a square matrix and returns a modified form of that matrix that is able to store its own inverse once it is calculated. This function is based on a <a href="https://github.com/rdpeng/ProgrammingAssignment2/blob/master/README.md">script by Roger Peng</a> with <a href="https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-953">changes by Patrick Gillen and Lenka Vyslouzilova</a>.</li>
+<li><code>cacheSolve()</code> takes a modified matrix created by <code>makeCacheMatrix()</code> and returns the cached inverse if it is already stored. The inverse will thus need to be only calculated once per matrix.</li>
 </ul>
 
-<pre><code class="r">makeVector &lt;- function(x = numeric()) {
-    m &lt;- NULL
-    x &lt;- x
-    set &lt;- function(y) {
-        x &lt;&lt;- y
-        m &lt;&lt;- NULL
-    }
-    get &lt;- function() x
-    setmean &lt;- function(mean) m &lt;&lt;- mean
-    getmean &lt;- function() m
-    list(set = set, get = get, setmean = setmean, getmean = getmean)
-}
+<p>Neither function checks whether the matrix passed in indeed has an inverse, so fatal errors are possible.</p>
 
-cachemean &lt;- function(x, ...) {
-    m &lt;- x$getmean()
-    if (!is.null(m)) {
-        # message(&#39;getting cached data&#39;)
-        return(m)
-    }
-    data &lt;- x$get()
-    m &lt;- mean(data, ...)
-    x$setmean(m)
-    m
-}
-</code></pre>
-
-<p>Two test functions are now set up:</p>
+<p>The code chunk also creates two key objects:</p>
 
 <ul>
-<li><code>test_mean(x, r)</code> takes a numeric vector, <code>x</code>, and calculates its mean <code>r</code> times. It finally prints out the value of the mean as a check on proper functioning.</li>
-<li><code>test_cache_mean(x,r)</code> takes the same two arguments. It first converts the <code>x</code> vector into a caching object using the <code>makeVector()</code> function. Then it runs <code>cachemean()</code> on that object <code>r</code> times. Finally it prints out the value of <code>cachemean()</code> as a check on proper functioning.</li>
+<li><code>x</code> is a simple 3 by 3 matrix which is known to have an inverse</li>
+<li><code>cm_x</code> is a caching matrix of the type described above</li>
 </ul>
 
-<p>These two functions should return similar results but the second should run much faster.</p>
+<pre><code class="r">source(&quot;cachematrix.R&quot;)
 
-<pre><code class="r">test_mean = function(x, r) {
-    for (i in 1:r) {
-        mean(x)
-    }
-    message(mean(x))
-}
-
-test_cache_mean = function(x, r) {
-    y = makeVector(x)
-    for (i in 1:r) {
-        cachemean(y)
-    }
-    message(cachemean(y))
-}
+vec &lt;- c(1, 2, 3, 0, 1, 4, 5, 6, 0)
+x &lt;- matrix(vec, nrow = 3, ncol = 3)
+cm_x &lt;- makeCacheMatrix(x)
 </code></pre>
 
-<p>The final chunk runs both tests a large number of times and checks:</p>
+<h2>Tests</h2>
+
+<h3>Correctness</h3>
+
+<p>The following two lines check:</p>
 
 <ol>
-<li>the total time taken for each run</li>
-<li>whether the results of the two functions are identical</li>
+<li>That a call to <code>solve()</code> and a call to <code>cachesolve()</code> produce identical results, i.e. our modification to the solving function does not alter the result, and</li>
+<li>That repeated calls to <code>cachesolve()</code> return the same result.</li>
 </ol>
 
-<pre><code class="r">test_vec = 1:1000 * 1.35
-r = 1e+06  # number of repetitions of the test
-
-system.time(test_mean(test_vec, r))
-</code></pre>
-
-<pre><code>## 675.675
-</code></pre>
-
-<pre><code>##    user  system elapsed 
-##   16.18    0.05   16.28
-</code></pre>
-
-<pre><code class="r">system.time(test_cache_mean(test_vec, r))
-</code></pre>
-
-<pre><code>## 675.675
-</code></pre>
-
-<pre><code>##    user  system elapsed 
-##   2.633   0.009   2.678
-</code></pre>
-
-<pre><code class="r">
-identical(mean(test_vec), cachemean(makeVector(test_vec)))
+<pre><code class="r">identical(cacheSolve(cm_x), solve(x))
 </code></pre>
 
 <pre><code>## [1] TRUE
 </code></pre>
 
-<h2>Results</h2>
-
-<p>Here are the results of one such run of these tests with one million iterations (they will differ to some degree from the results produced by the actual run above):</p>
-
-<pre><code>&gt; system.time(test_mean(test_vec, r))
-675.675
-   user  system elapsed 
- 16.470   0.042  16.573 
-
-&gt; system.time(test_cache_mean(test_vec, r))
-675.675
-   user  system elapsed 
-  2.624   0.011   2.645 
-
-&gt; identical(mean(test_vec), cachemean(makeVector(test_vec)))
-[1] TRUE
+<pre><code class="r">identical(cacheSolve(cm_x), cacheSolve(cm_x))
 </code></pre>
 
-<p>For the given vector,</p>
+<pre><code>## [1] TRUE
+</code></pre>
 
-<ol>
-<li>Both functions returned the correct, identical, value of 675.675 for the mean</li>
-<li>One million iterations of the <code>cachemean()</code> functions took a total of 2.645 seconds as compared to 16.573 seconds for the normal function, less than one-fifth of the time.</li>
-</ol>
+<h3>Speed</h3>
+
+<p>The following chunk sets up two test functions to time the standard <code>solve()</code> function versus <code>cacheslve()</code>. This is done simply by running the functions a million times over the same objects created above and reporting the time it takes.</p>
+
+<pre><code class="r">test_inverse = function(x, r = 1e+06) {
+    m &lt;- matrix(x, nrow = 3, ncol = 3)
+    for (i in 1:r) {
+        solve(m)
+    }
+}
+
+test_cache_inverse = function(x, r = 1e+06) {
+    y = makeCacheMatrix(matrix(x, nrow = 3, ncol = 3))
+    for (i in 1:r) {
+        cacheSolve(y)
+    }
+}
+</code></pre>
+
+<p>Next we run the tests and compare the times:</p>
+
+<pre><code class="r">vec &lt;- c(1, 2, 3, 0, 1, 4, 5, 6, 0)
+
+system.time(test_inverse(vec))
+system.time(test_cache_inverse(vec))
+</code></pre>
+
+<h3>Results</h3>
+
+<p>Below are the results from a single run of the speed test (actual runs will vary from machine to machine and between runs on the same machine).</p>
+
+<pre><code>&gt; system.time(test_inverse(vec))
+   user  system elapsed 
+  35.61    0.02   35.64 
+
+&gt; system.time(test_cache_inverse(vec))
+   user  system elapsed 
+   3.71    0.00    3.70 
+</code></pre>
+
+<p>The cached version was almost ten times faster than the standard version of <code>solve()</code>. </p>
+
+<h2>Errors</h2>
+
+<p>Neither of the functions performs any error checking. If a matrix is passed in that does not have an inverse, a fatal error results. </p>
+
+<pre><code class="r">vec &lt;- c(4, 6, -6, -9)
+x &lt;- matrix(vec, nrow = 2, ncol = 2)
+cacheSolve(makeCacheMatrix(x))
+</code></pre>
+
+<pre><code>## Error: Lapack routine dgesv: system is exactly singular: U[2,2] = 0
+</code></pre>
+
+<p>This will also happen if the object passed in is not a matrix.</p>
+
+<pre><code class="r">vec &lt;- c(1, 2, 3, 0, 1, 4, 5, 6, 0)
+cacheSolve(vec)
+</code></pre>
+
+<pre><code>## Error: $ operator is invalid for atomic vectors
+</code></pre>
+
+<p>The changes to the functions to catch and resolve these conditions gracefully would be a natural addition to the code but is specifically excluded from the scope of the Coursera assignment.</p>
 
 </body>
 
