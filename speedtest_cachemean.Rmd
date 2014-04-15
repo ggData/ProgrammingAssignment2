@@ -76,7 +76,7 @@ identical(mean(test_vec), cachemean(makeVector(test_vec)))
 
 ## Results
 
-Here are the results of one such run of these tests with one million iterations (they will differ to some degree from the results produuced by the actual run above):
+Here are the results of one such run of these tests with one million iterations (they will differ to some degree from the results produced by the actual run above):
 
 ```
 > system.time(test_mean(test_vec, r))
