@@ -1,39 +1,39 @@
-# Assignment 2: Caching the Mean
+# Caching the Mean: A Speed Test
 
 The first code chunk defines the two example functions provided for the assignment. This is based on the example provided by Roger Peng [here](https://class.coursera.org/rprog-002/human_grading/view/courses/972078/assessments/3/submissions)
 
 - `makeVector()` receives a `numeric` vector and returns a modified form of that vector that is able to store the mean if once it is calculated. This version of the function is modified using the [proposed changes by Patrick Gillen](https://class.coursera.org/rprog-002/forum/thread?thread_id=370#comment-826).
 - `cachemean()` takes a modified vector created as above and returnes the cached mean if it is already stored. The mean will thus need to be only calculated once.
 
-```{r example_functions}
+
+```r
 makeVector <- function(x = numeric()) {
-        m <- NULL
-        set <- function(y) {
-                x <<- y
-                m <<- NULL
-        }
-        get <- function() x
-        setmean <- function(mean) m <<- mean
-        getmean <- function() m
-        retval <- list(set = set, get = get,
-                       setmean = setmean,
-                       getmean = getmean)
-        retval$set(x)
-        retval
+    m <- NULL
+    set <- function(y) {
+        x <<- y
+        m <<- NULL
+    }
+    get <- function() x
+    setmean <- function(mean) m <<- mean
+    getmean <- function() m
+    retval <- list(set = set, get = get, setmean = setmean, getmean = getmean)
+    retval$set(x)
+    retval
 }
 
 cachemean <- function(x, ...) {
-        m <- x$getmean()
-        if(!is.null(m)) {
-                # message("getting cached data")
-                return(m)
-        }
-        data <- x$get()
-        m <- mean(data, ...)
-        x$setmean(m)
-        m
+    m <- x$getmean()
+    if (!is.null(m)) {
+        # message('getting cached data')
+        return(m)
+    }
+    data <- x$get()
+    m <- mean(data, ...)
+    x$setmean(m)
+    m
 }
 ```
+
 
 Two test functions are now set up:
 
@@ -42,37 +42,69 @@ Two test functions are now set up:
 
 These two functions should return similar results but the second should run much faster.
 
-```{r tests}
+
+```r
 test_mean = function(x, r) {
-  for (i in 1:r){
-    mean(x)
-  }
-  message(mean(x))
+    for (i in 1:r) {
+        mean(x)
+    }
+    message(mean(x))
 }
 
 test_cache_mean = function(x, r) {
-  y = makeVector(x)
-  for (i in 1:r){
-    cachemean(y)
-  }
-  message(cachemean(y))
+    y = makeVector(x)
+    for (i in 1:r) {
+        cachemean(y)
+    }
+    message(cachemean(y))
 }
 ```
+
 
 The final chunk runs both tests a large number of times and checks:
 
 1. the total time taken for each run
 2. whether the results of the two functions are identical
 
-```{r test_run}
+
+```r
 test_vec = 1:1000 * 1.35
-r = 1000000  # number of repetitions of the test
+r = 1e+06  # number of repetitions of the test
 
 system.time(test_mean(test_vec, r))
+```
+
+```
+## 675.675
+```
+
+```
+##    user  system elapsed 
+##  16.144   0.046  16.256
+```
+
+```r
 system.time(test_cache_mean(test_vec, r))
+```
+
+```
+## 675.675
+```
+
+```
+##    user  system elapsed 
+##   2.596   0.006   2.612
+```
+
+```r
 
 identical(mean(test_vec), cachemean(makeVector(test_vec)))
 ```
+
+```
+## [1] TRUE
+```
+
 
 ## Results
 
