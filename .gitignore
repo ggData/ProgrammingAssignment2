@@ -1,1 +1,4 @@
 .Rhistory
+.RData
+*commented.R
+*commented_clean.R
